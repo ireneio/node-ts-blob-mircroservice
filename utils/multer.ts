@@ -1,7 +1,6 @@
 import multer, { MulterError } from 'multer'
 import { configurefileFormat } from './file'
 import HttpResponse from "../utils/http"
-import e from 'express'
 
 // Default Max File Size: 1GB, Upload File Counts: 12
 const limitFileSize: string = process.env.NODE_APP_LIMITFILESIZE || '1000000000'
