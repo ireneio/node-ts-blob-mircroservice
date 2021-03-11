@@ -7,13 +7,13 @@ import cors from 'cors'
 import HttpResponse from './utils/http'
 
 import indexRouter from './routes/index'
-import authRouter from './routes/auth'
-import userRouter from './routes/user'
 
-import initLocalPg from './db/local'
+import * as ChildProcess from 'child_process'
+import { job } from './utils/cron'
 
-// connect db
-await initLocalPg()
+ChildProcess.execSync('[ -d static ] || mkdir static')
+
+job.start()
 
 const app: Application = express()
 
@@ -32,8 +32,6 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 // routers
 app.use('/', indexRouter)
-app.use('/auth', authRouter)
-app.use('/user', userRouter)
 
 // 403 all other routes
 app.use('*', function(req: Request, res: Response, next: Function): void {
