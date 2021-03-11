@@ -1,44 +1,27 @@
 import express, { Router, Request, Response } from "express"
 import HttpResponse from "../utils/http"
 import * as ChildProcess from 'child_process'
-import multer, { MulterError } from 'multer'
+import { uploadFiles } from '../utils/multer'
 
 const router: Router = express.Router()
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const { uuid: id } = req.query
-    cb(null, `static/${id}`)
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now() + '.png')
-  }
-})
-
-const upload = multer({ storage })
+const container: string = process.env.NODE_APP_AZURE_CONTAINER || ''
+const storageAccount: string = process.env.NODE_APP_AZURE_STORAGEACCOUNT || ''
+const storageAccountPw: string = process.env.NODE_APP_AZURE_STORAGEACCOUNTPW || ''
+const storageUri: string = `${process.env.NODE_APP_AZURE_STORAGEURI}`
 
 /* POST upload. */
 router.post('/upload', function(req: Request, res: Response, next: Function): void {
   try {
     const { uuid: id } = req.query
-    if(!id) throw new Error('input error')
-    const container: string = process.env.NODE_APP_AZURE_CONTAINER || ''
-    const storageAccount: string = process.env.NODE_APP_AZURE_STORAGEACCOUNT || ''
-    const storageAccountPw: string = process.env.NODE_APP_AZURE_STORAGEACCOUNTPW || ''
-    const storageUri: string = `${process.env.NODE_APP_AZURE_STORAGEURI}`
-    const storageFullPath: string = `${process.env.NODE_APP_AZURE_STORAGEURI}/${container}/static/${id}/`
-    const uploadMaxCount: string = process.env.NODE_APP_UPLOADMAXCOUNT || '12'
+    if(!id) throw new Error('Input Error')
 
     ChildProcess.execSync(`mkdir ${id} && cp -R ${id} static && rmdir ${id}`)
 
-    upload.array('blobs', Number(uploadMaxCount))(req, res, (err: any) => {
-      if(err instanceof MulterError) {
-        throw new Error('multer error')
-      } else if (err) {
-        throw new Error('unknown error')
-      }
-
+    function uploadCb(): void {
       ChildProcess.execSync(`bash ./azure-deploy-data.sh all ${container} ${storageAccount} ${storageAccountPw} ${id}`)
+
+      const storageFullPath: string = `${storageUri}/${container}/static/${id}/`
 
       // @ts-ignore
       const blobDataArr: any[] = Array(...req.files)
@@ -54,11 +37,16 @@ router.post('/upload', function(req: Request, res: Response, next: Function): vo
         storageFullPath,
         blobData: [...blobDataArr]
       }
+
       res.send(new HttpResponse(200, 'success', responseData))
-    })
+    }
+    uploadFiles(req, res, 'blobs', uploadCb)
   } catch(e) {
-    console.log('Upload Error: ', e.message)
-    res.send(new HttpResponse(400, e.message))
+    if(e.message === 'Input Error') {
+      res.send(new HttpResponse(400, e.message))
+    } else {
+      res.send(new HttpResponse(500, e.message))
+    }
   }
 })
 

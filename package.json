@@ -1,11 +1,11 @@
 {
-  "name": "node-server-es5-webpack-template",
+  "name": "node-ts-blob-microservice",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "babel-node ./dist/app.bundle.js",
     "dev:unbundled": "nodemon --exec babel-node ./bin/www.ts",
-    "dev": "cross-env NODE_APP_CORS_URL=http://localhost:3000 NODE_APP_UPLOADMAXCOUNT=12 NODE_APP_AZURE_CONTAINER=test1 NODE_APP_AZURE_STORAGEACCOUNT=iretest NODE_APP_AZURE_STORAGEACCOUNTPW=ih4wtT3oxEkWnuWKGLLTVywajiKEK30Ev7WX27HOVo6k7cAIqY4f5qPIWQH7LVrxS71KTGXYTbJisGLCmWzN9g== NODE_APP_AZURE_STORAGEURI=https://iretest.blob.core.windows.net nodemon --exec babel-node ./dist/app.bundle.js",
+    "dev": "cross-env NODE_APP_CORS_URL=http://localhost:3000 NODE_APP_UPLOADMAXCOUNT=12 NODE_APP_LIMITFILESIZE=1000000000 NODE_APP_AZURE_CONTAINER=test1 NODE_APP_AZURE_STORAGEACCOUNT=iretest NODE_APP_AZURE_STORAGEACCOUNTPW=ih4wtT3oxEkWnuWKGLLTVywajiKEK30Ev7WX27HOVo6k7cAIqY4f5qPIWQH7LVrxS71KTGXYTbJisGLCmWzN9g== NODE_APP_AZURE_STORAGEURI=https://iretest.blob.core.windows.net nodemon --exec babel-node ./dist/app.bundle.js",
     "build:dev": "webpack-cli --config webpack.config.cjs -w --progress --color",
     "build:prod": "webpack --config webpack.config.cjs --progress --color",
     "docker:dev": "bash ./docker-build-run.sh",
