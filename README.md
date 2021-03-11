@@ -1,8 +1,8 @@
-# node-ts-auth-microservice
+# node-ts-blob-microservice
 
 ## Description
 
-- A basic Node + Typescript OAuth Authentication service via JWT.
+- A blob upload mircroservice integrated with Azure.
 
 ## Stack
 
