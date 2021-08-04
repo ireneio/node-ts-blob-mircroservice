@@ -11,6 +11,14 @@ import indexRouter from './routes/index'
 import * as ChildProcess from 'child_process'
 import { job } from './utils/cron'
 
+console.log('[env] NODE_APP_UPLOADMAXCOUNT', process.env.NODE_APP_UPLOADMAXCOUNT)
+console.log('[env] NODE_APP_LIMITFILESIZE', process.env.NODE_APP_LIMITFILESIZE)
+console.log('[env] NODE_APP_AZURE_CONTAINER', process.env.NODE_APP_AZURE_CONTAINER)
+console.log('[env] NODE_APP_AZURE_STORAGEACCOUNT', process.env.NODE_APP_AZURE_STORAGEACCOUNT)
+console.log('[env] NODE_APP_AZURE_STORAGEURI', process.env.NODE_APP_AZURE_STORAGEURI)
+console.log('[env] NODE_APP_AZURE_STORAGEACCOUNTPW', process.env.NODE_APP_AZURE_STORAGEACCOUNTPW)
+console.log()
+
 ChildProcess.execSync('[ -d static ] || mkdir static')
 
 job.start()

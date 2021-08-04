@@ -1,5 +1,6 @@
 const path = require('path')
 const nodeExternals = require('webpack-node-externals')
+const Dotenv = require('dotenv-webpack')
 
 const config = {
   target: 'node',
@@ -35,7 +36,14 @@ const config = {
     fallback: {
       http: require.resolve("http")
     }
-  }
+  },
+  plugins: [
+    new Dotenv({
+      path: './.env',
+      safe: true,
+      allowEmptyValues: true
+    })
+  ]
 }
 
 module.exports = config
